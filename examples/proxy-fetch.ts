@@ -6,7 +6,7 @@
  * Usage: PROXY_URL=http://proxy:8080 npx tsx examples/proxy-fetch.ts
  */
 import { ProxyAgent } from 'undici'
-import { RESTv2 } from 'bfx-api-node-rest'
+import { RESTv2 } from '@jcbit/bfx-api-node-rest'
 
 const proxyUrl = process.env.PROXY_URL || 'http://localhost:8080'
 const dispatcher = new ProxyAgent(proxyUrl)

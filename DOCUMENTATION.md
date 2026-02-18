@@ -1,4 +1,4 @@
-# bfx-api-node-rest v8.0.0 — API Reference
+# @jcbit/bfx-api-node-rest v8.0.0 — API Reference
 
 Official Bitfinex REST v1 & v2 API client for Node.js (ESM, TypeScript).
 
@@ -29,13 +29,13 @@ Official Bitfinex REST v1 & v2 API client for Node.js (ESM, TypeScript).
 ## Installation & Quick Start
 
 ```bash
-npm i --save bfx-api-node-rest
+npm i --save @jcbit/bfx-api-node-rest
 ```
 
 Requires **Node.js >= 22.0.0**. The package is ESM-only.
 
 ```typescript
-import { RESTv2 } from 'bfx-api-node-rest'
+import { RESTv2 } from '@jcbit/bfx-api-node-rest'
 
 // Public (unauthenticated) client
 const rest = new RESTv2({ transform: true })
@@ -1826,7 +1826,7 @@ const rate = await rest.exchangeRate({ ccy1: 'BTC', ccy2: 'USD' })
 > **Warning:** RESTv1 is deprecated. All new development should use RESTv2. The v1 API may be removed in a future major release.
 
 ```typescript
-import { RESTv1 } from 'bfx-api-node-rest'
+import { RESTv1 } from '@jcbit/bfx-api-node-rest'
 ```
 
 RESTv1 uses callback-only methods (no promises). It is provided for backward compatibility.
@@ -1914,7 +1914,7 @@ When error code `10114` is detected, the library automatically appends a help li
 The `fetch` option lets you supply a custom `fetch` implementation. This is the recommended way to route requests through an HTTP proxy using `undici`'s `ProxyAgent`.
 
 ```typescript
-import { RESTv2 } from 'bfx-api-node-rest'
+import { RESTv2 } from '@jcbit/bfx-api-node-rest'
 import { ProxyAgent, fetch as undiciFetch } from 'undici'
 
 const proxyAgent = new ProxyAgent('http://my-proxy:8080')

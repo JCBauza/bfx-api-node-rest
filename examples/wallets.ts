@@ -3,7 +3,7 @@
  *
  * Usage: BFX_API_KEY=... BFX_API_SECRET=... npx tsx examples/wallets.ts
  */
-import { RESTv2 } from 'bfx-api-node-rest'
+import { RESTv2 } from '@jcbit/bfx-api-node-rest'
 
 const rest = new RESTv2({
   apiKey: process.env.BFX_API_KEY,

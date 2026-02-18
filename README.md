@@ -1,6 +1,6 @@
 # Bitfinex RESTv1 & RESTv2 APIs for Node.JS
 
-[![CI](https://github.com/bitfinexcom/bfx-api-node-rest/actions/workflows/ci.yml/badge.svg)](https://github.com/bitfinexcom/bfx-api-node-rest/actions/workflows/ci.yml)
+[![CI](https://github.com/JCBauza/bfx-api-node-rest/actions/workflows/ci.yml/badge.svg)](https://github.com/JCBauza/bfx-api-node-rest/actions/workflows/ci.yml)
 
 A Node.JS reference implementation of the Bitfinex REST APIs
 
@@ -29,13 +29,13 @@ when creating an interface.
 ## Installation
 
 ```bash
-npm i --save bfx-api-node-rest
+npm i --save @jcbit/bfx-api-node-rest
 ```
 
 ### Quickstart
 
 ```typescript
-import { RESTv2 } from 'bfx-api-node-rest'
+import { RESTv2 } from '@jcbit/bfx-api-node-rest'
 
 const rest = new RESTv2({ transform: true })
 
@@ -50,7 +50,7 @@ Documentation at [https://docs.bitfinex.com/v2/reference](https://docs.bitfinex.
 ## Example
 
 ```typescript
-import { RESTv2 } from 'bfx-api-node-rest'
+import { RESTv2 } from '@jcbit/bfx-api-node-rest'
 
 const rest = new RESTv2({
   apiKey: '...',
@@ -83,7 +83,7 @@ console.log(candles)
 * **`agent` option removed** — use a custom `fetch` function for proxy support:
   ```typescript
   import { ProxyAgent } from 'undici'
-  import { RESTv2 } from 'bfx-api-node-rest'
+  import { RESTv2 } from '@jcbit/bfx-api-node-rest'
 
   const dispatcher = new ProxyAgent('http://proxy:8080')
   const rest = new RESTv2({

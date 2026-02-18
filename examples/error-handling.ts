@@ -3,8 +3,8 @@
  *
  * Usage: npx tsx examples/error-handling.ts
  */
-import { RESTv2 } from 'bfx-api-node-rest'
-import type { APIError } from 'bfx-api-node-rest'
+import { RESTv2 } from '@jcbit/bfx-api-node-rest'
+import type { APIError } from '@jcbit/bfx-api-node-rest'
 
 const rest = new RESTv2({ transform: true })
 

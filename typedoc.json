@@ -2,13 +2,13 @@
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": ["src/index.ts"],
   "out": "docs",
-  "name": "bfx-api-node-rest",
+  "name": "@jcbit/bfx-api-node-rest",
   "readme": "DOCUMENTATION.md",
   "excludePrivate": false,
   "excludeInternal": true,
   "includeVersion": true,
   "navigationLinks": {
     "Bitfinex API Docs": "https://docs.bitfinex.com/v2/reference",
-    "GitHub": "https://github.com/bitfinexcom/bfx-api-node-rest"
+    "GitHub": "https://github.com/JCBauza/bfx-api-node-rest"
   }
 }

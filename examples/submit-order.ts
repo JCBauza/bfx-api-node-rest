@@ -3,7 +3,7 @@
  *
  * Usage: BFX_API_KEY=... BFX_API_SECRET=... npx tsx examples/submit-order.ts
  */
-import { RESTv2 } from 'bfx-api-node-rest'
+import { RESTv2 } from '@jcbit/bfx-api-node-rest'
 import Models from 'bfx-api-node-models'
 
 const { Order } = Models
