@@ -1,15 +1,15 @@
-'use strict'
+import Debug from 'debug'
+import { RESTv2 } from '../dist/index.js'
 
 process.env.DEBUG = '*'
 
-const debug = require('debug')('bfx:api:rest:examples:trades')
-const { RESTv2 } = require('../')
+const debug = Debug('bfx:api:rest:examples:trades')
 const rest = new RESTv2({ transform: true })
 
 const SYMBOL = 'tBTCUSD'
 
 const run = async () => {
-  const trades = await rest.trades(SYMBOL)
+  const trades = await rest.trades({ symbol: SYMBOL })
   const [lastTrade] = trades
 
   debug('recv %d trades for %s', trades.length, SYMBOL)
@@ -21,8 +21,4 @@ const run = async () => {
   }, null, 2))
 }
 
-try {
-  run()
-} catch (e) {
-  debug('error: %s', e.stack)
-}
+run().catch(e => debug('error: %s', e.stack))

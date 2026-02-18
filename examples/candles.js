@@ -1,9 +1,9 @@
-'use strict'
+import Debug from 'debug'
+import { RESTv2 } from '../dist/index.js'
 
 process.env.DEBUG = '*'
 
-const debug = require('debug')('bfx:api:rest:examples:candles')
-const { RESTv2 } = require('../')
+const debug = Debug('bfx:api:rest:examples:candles')
 const rest = new RESTv2({ transform: true })
 
 const SYMBOL = 'tBTCUSD'
@@ -13,10 +13,11 @@ const run = async () => {
   const candles = await rest.candles({
     timeframe: TIME_FRAME,
     symbol: SYMBOL,
+    section: 'hist',
     query: {
-      start: Date.now() - (24 * 60 * 60 * 1000),
-      end: Date.now(),
-      limit: 1000
+      start: String(Date.now() - (24 * 60 * 60 * 1000)),
+      end: String(Date.now()),
+      limit: '1000'
     }
   })
 
@@ -33,8 +34,4 @@ const run = async () => {
   }, null, 2))
 }
 
-try {
-  run()
-} catch (e) {
-  debug('error: %s', e.stack)
-}
+run().catch(e => debug('error: %s', e.stack))

@@ -1,3 +1,36 @@
+# 8.0.0 (Breaking)
+
+## Breaking Changes
+- **Node.js >= 22.0.0 required** — upgraded from Node 8.3 minimum
+- **ESM-only** — `require()` is no longer supported; use `import` instead
+- **TypeScript rewrite** — full strict-mode TypeScript with `.d.ts` type declarations
+- **`agent` option removed** — use a custom `fetch` function for proxy support (see DOCUMENTATION.md)
+- **`node-fetch` removed** — uses the native `fetch` API built into Node 22+
+- **`lodash` removed** — replaced with native JS equivalents
+- **RESTv1 deprecated** — still available but marked `@deprecated` with migration guidance
+
+## Bug Fixes
+- RESTv2: fixed `generateToken` bug where `pick` result was overwritten by `omitNil(params)`
+- RESTv2: added guard for non-array JSON in `_apiError` response parsing
+- RESTv1: cleaned up console.log default callback in `ticker()`
+
+## Infrastructure
+- Replaced Travis CI with GitHub Actions CI workflow
+- Replaced `standard` linter with ESLint + `@typescript-eslint`
+- Replaced `nyc` with `c8` for ESM-compatible V8 code coverage
+- Replaced `proxyquire` with `sinon.stub(globalThis, 'fetch')` in tests
+- RESTv1: replaced manual query string building with `URLSearchParams`
+- Deleted old JavaScript source files (`lib/`, `index.js`)
+- Deleted stale JSDoc config and generated HTML docs
+- Added TypeDoc for TypeScript-native API documentation generation
+
+## Documentation & Coverage
+- Comprehensive DOCUMENTATION.md rewrite with full API reference (all 80+ methods)
+- JSDoc enrichment across all public methods, interfaces, and classes
+- 5 new TypeScript example files (wallets, orders, funding, proxy, error handling)
+- Test coverage: 224 tests, 92% lines, 93% branches, 90% functions
+- Coverage thresholds raised to 90/90/85/90 (lines/branches/functions/statements)
+
 # 7.0.0
 - RESTv2: remove pay endpoints
 

@@ -1,6 +1,7 @@
 # Bitfinex RESTv1 & RESTv2 APIs for Node.JS
 
-[![Build Status](https://travis-ci.org/bitfinexcom/bfx-api-node-rest.svg?branch=master)](https://travis-ci.org/bitfinexcom/bfx-api-node-rest)
+[![CI](https://github.com/bitfinexcom/bfx-api-node-rest/actions/workflows/ci.yml/badge.svg)](https://github.com/bitfinexcom/bfx-api-node-rest/actions/workflows/ci.yml)
+
 A Node.JS reference implementation of the Bitfinex REST APIs
 
 To use, construct a new instance of either the `RESTv1` or `RESTv2` classes.
@@ -15,33 +16,41 @@ when creating an interface.
 
 * Official implementation
 * REST v2 API
-* REST v1 API
+* REST v1 API (deprecated)
+* Full TypeScript support with type declarations
+* ESM native (no CommonJS)
+* Native `fetch` (no polyfills)
+* Zero dependency on `lodash`
+
+## Requirements
+
+* Node.js >= 22.0.0
 
 ## Installation
 
 ```bash
-  npm i --save bfx-api-node-rest
+npm i --save bfx-api-node-rest
 ```
 
 ### Quickstart
 
-```js
-const { RESTv2 } = require('bfx-api-node-rest')
+```typescript
+import { RESTv2 } from 'bfx-api-node-rest'
+
 const rest = new RESTv2({ transform: true })
 
-// do something with the RESTv2 instance
+const tickers = await rest.tickers({ symbols: ['tBTCUSD'] })
+console.log(tickers)
 ```
 
 ### Docs
 
 Documentation at [https://docs.bitfinex.com/v2/reference](https://docs.bitfinex.com/v2/reference)
 
-[See `docs/`](/docs) for JSDoc generated documentation of available methods.
-
 ## Example
 
-```js
-const { RESTv2 } = require('bfx-api-node-rest')
+```typescript
+import { RESTv2 } from 'bfx-api-node-rest'
 
 const rest = new RESTv2({
   apiKey: '...',
@@ -49,23 +58,43 @@ const rest = new RESTv2({
   authToken: '...', // optional, has priority over API key/secret
   url: '...',       // optional
   transform: true,  // to have full models returned by all methods
-  agent: null,      // optional proxy agent
+  fetch: null,      // optional custom fetch function (for proxies, etc.)
 })
 
-rest.candles({
+const candles = await rest.candles({
   timeframe: '1m',
   symbol: 'tBTCUSD',
   query: {
-    start: Date.now() - (24 * 60 * 60 * 1000),
-    end: Date.now(),
-    limit: 1000,
+    start: String(Date.now() - (24 * 60 * 60 * 1000)),
+    end: String(Date.now()),
+    limit: '1000',
   }
-}).then((candles) => {
-  // ...
-}).catch((err) => {
-  console.log(err)
 })
+
+console.log(candles)
 ```
+
+## Migration from v7 to v8
+
+### Breaking changes
+
+* **Node.js >= 22 required** — upgrade from the previous minimum of Node 8.3
+* **ESM only** — `require()` is no longer supported; use `import` instead
+* **`agent` option removed** — use a custom `fetch` function for proxy support:
+  ```typescript
+  import { ProxyAgent } from 'undici'
+  import { RESTv2 } from 'bfx-api-node-rest'
+
+  const dispatcher = new ProxyAgent('http://proxy:8080')
+  const rest = new RESTv2({
+    fetch: (url, opts) => fetch(url, { ...opts, dispatcher })
+  })
+  ```
+* **TypeScript rewrite** — all source is now TypeScript with full type declarations
+* **`node-fetch` removed** — uses the native `fetch` API built into Node 22+
+* **`lodash` removed** — replaced with native JS equivalents
+* **RESTv1 deprecated** — still available but marked as deprecated
+* **`generateToken` bug fix** — now correctly picks only the documented params
 
 ## FAQ
 
