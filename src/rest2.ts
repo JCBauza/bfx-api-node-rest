@@ -1149,21 +1149,37 @@ export class RESTv2 {
 
   // ---- Settings ----
 
+  /**
+   * Update account settings.
+   * @see https://docs.bitfinex.com/reference#rest-auth-settings-set
+   */
   updateSettings (params: { settings: Record<string, unknown> }, cb: Callback | null = null) {
     const { settings } = params
     return this._makeAuthRequest('/auth/w/settings/set', { settings }, cb)
   }
 
+  /**
+   * Delete account settings by key.
+   * @see https://docs.bitfinex.com/reference#rest-auth-settings-del
+   */
   deleteSettings (params: { keys: string[] }, cb: Callback | null = null) {
     const { keys } = params
     return this._makeAuthRequest('/auth/w/settings/del', { keys }, cb)
   }
 
+  /**
+   * Retrieve account settings by key.
+   * @see https://docs.bitfinex.com/reference#rest-auth-settings
+   */
   getSettings (params: { keys: string[] }, cb: Callback | null = null) {
     const { keys } = params
     return this._makeAuthRequest('/auth/r/settings', { keys }, cb)
   }
 
+  /**
+   * Retrieve core platform settings by key.
+   * @see https://docs.bitfinex.com/reference#rest-auth-settings-core
+   */
   getCoreSettings (params: { keys: string[] }, cb: Callback | null = null) {
     const { keys } = params
     return this._makeAuthRequest('/auth/r/settings/core', { keys }, cb, CoreSettings)
@@ -1171,6 +1187,9 @@ export class RESTv2 {
 
   // ---- Exchange Rate ----
 
+  /**
+   * Get the exchange rate between two currencies.
+   */
   async exchangeRate (params: { ccy1: string; ccy2: string }, cb: Callback | null = null) {
     const { ccy1, ccy2 } = params
     const res = await this._makePublicPostRequest('/calc/fx', { ccy1, ccy2 }, null)
@@ -1197,6 +1216,10 @@ export class RESTv2 {
     return this._makeAuthRequest('/auth/w/token', opts as Record<string, unknown>, cb)
   }
 
+  /**
+   * Invalidate (revoke) an authentication token.
+   * @see https://docs.bitfinex.com/reference#rest-auth-token-del
+   */
   invalidateAuthToken (params: { authToken: string }, cb: Callback | null = null) {
     const { authToken } = params
     return this._makeAuthRequest('/auth/w/token/del', { token: authToken }, cb)
@@ -1359,7 +1382,13 @@ export class RESTv2 {
    * @see https://docs.bitfinex.com/reference#rest-auth-order-cancel-multi
    */
   cancelOrderMulti (params: { id?: number[]; gid?: number[]; cid?: number[][]; all?: number }, cb: Callback | null = null) {
-    return (this._makeAuthRequest('/auth/w/order/cancel/multi', params, cb) as Promise<unknown>)
+    const { id, gid, cid, all } = params
+    const body: Record<string, unknown> = {}
+    if (id !== undefined) body.id = id
+    if (gid !== undefined) body.gid = gid
+    if (cid !== undefined) body.cid = cid
+    if (all !== undefined) body.all = all
+    return (this._makeAuthRequest('/auth/w/order/cancel/multi', body, cb) as Promise<unknown>)
       .then(_takeResNotify)
   }
 
@@ -1368,9 +1397,11 @@ export class RESTv2 {
   /**
    * Claim existing open position
    */
-  claimPosition (params: { id: number }, cb: Callback | null = null) {
-    const { id } = params
-    return (this._makeAuthRequest('/auth/w/position/claim', { id }, cb) as Promise<unknown>)
+  claimPosition (params: { id: number; amount?: number | string }, cb: Callback | null = null) {
+    const { id, amount } = params
+    const body: Record<string, unknown> = { id }
+    if (amount !== undefined) body.amount = String(amount)
+    return (this._makeAuthRequest('/auth/w/position/claim', body, cb) as Promise<unknown>)
       .then(_takeResNotify)
   }
 
@@ -1432,7 +1463,8 @@ export class RESTv2 {
    * Submit automatic funding
    */
   submitAutoFunding (params: { status: number; currency: string; amount: number; rate: number; period: number }, cb: Callback | null = null) {
-    return (this._makeAuthRequest('/auth/w/funding/auto', params, cb) as Promise<unknown>)
+    const { status, currency, amount, rate, period } = params
+    return (this._makeAuthRequest('/auth/w/funding/auto', { status, currency, amount, rate, period }, cb) as Promise<unknown>)
       .then(_takeResNotify)
   }
 
@@ -1455,6 +1487,10 @@ export class RESTv2 {
       .then(_takeResNotify)
   }
 
+  /**
+   * Get or generate a deposit address for the given wallet and method.
+   * @see https://docs.bitfinex.com/reference#rest-auth-deposit-address
+   */
   getDepositAddress (params: { wallet: string; method: string; opRenew?: number }, cb: Callback | null = null) {
     const opts: Record<string, unknown> = pick(params, ['wallet', 'method'])
     opts.op_renew = params.opRenew
@@ -1462,6 +1498,10 @@ export class RESTv2 {
       .then(_takeResNotify)
   }
 
+  /**
+   * Request a withdrawal from the platform.
+   * @see https://docs.bitfinex.com/reference#rest-auth-withdraw
+   */
   withdraw (params: Record<string, unknown>, cb: Callback | null = null) {
     return (this._makeAuthRequest('/auth/w/withdraw', params, cb) as Promise<unknown>)
       .then(_takeResNotify)
@@ -1471,7 +1511,8 @@ export class RESTv2 {
    * @see https://docs.bitfinex.com/reference#rest-auth-deposit-invoice
    */
   generateInvoice (params: { currency: string; wallet: string; amount: string }, cb: Callback | null = null) {
-    return this._makeAuthRequest('/auth/w/deposit/invoice', params, cb, Invoice)
+    const { currency, wallet, amount } = params
+    return this._makeAuthRequest('/auth/w/deposit/invoice', { currency, wallet, amount }, cb, Invoice)
   }
 
   /**
@@ -1484,30 +1525,48 @@ export class RESTv2 {
 
   // ---- Recurring Algo Orders ----
 
+  /**
+   * Create a new recurring algorithmic order.
+   */
   submitRecurringAlgoOrder (params: { order: Record<string, unknown> } = { order: {} }, cb: Callback | null = null) {
     const { order } = params
     return this._makeAuthRequest('/auth/w/ext/recurring-ao/create', order, cb)
   }
 
+  /**
+   * Retrieve details for a specific recurring algorithmic order.
+   */
   getRecurringAlgoOrder (params: { algoOrderId: string } = { algoOrderId: '' }, cb: Callback | null = null) {
     const { algoOrderId } = params
     return this._makeAuthRequest(`/auth/r/ext/recurring-ao/detail/${algoOrderId}`, {}, cb)
   }
 
+  /**
+   * Update an existing recurring algorithmic order.
+   */
   updateRecurringAlgoOrder (params: { order: Record<string, unknown> & { algoOrderId: string } } = { order: { algoOrderId: '' } }, cb: Callback | null = null) {
     const { order } = params
     return this._makeAuthRequest(`/auth/w/ext/recurring-ao/update/${order.algoOrderId}`, order, cb)
   }
 
+  /**
+   * Cancel a recurring algorithmic order.
+   */
   cancelRecurringAlgoOrder (params: { algoOrderId: string } = { algoOrderId: '' }, cb: Callback | null = null) {
     const { algoOrderId } = params
     return this._makeAuthRequest(`/auth/w/ext/recurring-ao/cancel/${algoOrderId}`, {}, cb)
   }
 
+  /**
+   * List all recurring algorithmic orders.
+   */
   getRecurringAlgoOrders (params: Record<string, unknown> = {}, cb: Callback | null = null) {
     return this._makeAuthRequest('/auth/r/ext/recurring-ao/list', params, cb)
   }
 
+  /**
+   * List child orders generated by recurring algorithmic orders.
+   */
   getRecurringAoOrders (params: Record<string, unknown> = {}, cb: Callback | null = null) {
     return this._makeAuthRequest('/auth/r/ext/recurring-ao/order/list', params, cb)
   }
@@ -1518,7 +1577,8 @@ export class RESTv2 {
    * Convert between currencies
    */
   currencyConversion (params: { ccy1: string; ccy2: string; amount: number }, cb: Callback | null = null) {
-    return this._makeAuthRequest('/auth/w/ext/currency/conversion', params, cb)
+    const { ccy1, ccy2, amount } = params
+    return this._makeAuthRequest('/auth/w/ext/currency/conversion', { ccy1, ccy2, amount }, cb)
   }
 }
 

@@ -1,3 +1,13 @@
+# 8.0.1
+
+## Bug Fixes
+- **`claimPosition`** now forwards the optional `amount` parameter for partial position claims
+
+## Improvements
+- Hardened `cancelOrderMulti`, `submitAutoFunding`, `generateInvoice`, and `currencyConversion` to destructure params instead of passing objects directly
+- Added JSDoc to 14 previously undocumented methods (settings, recurring algo orders, exchange rate, deposit address, withdraw, invalidateAuthToken)
+- Documented 6 missing methods in DOCUMENTATION.md: `symbols`, `inactiveSymbols`, `futures`, `marginInfo`, `getURL`, `usesAgent`
+
 # 8.0.0 (Breaking)
 
 ## Breaking Changes

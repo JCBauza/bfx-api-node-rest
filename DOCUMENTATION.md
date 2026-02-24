@@ -1,4 +1,4 @@
-# @jcbit/bfx-api-node-rest v8.0.0 — API Reference
+# @jcbit/bfx-api-node-rest v8.0.1 — API Reference
 
 Official Bitfinex REST v1 & v2 API client for Node.js (ESM, TypeScript).
 
@@ -23,6 +23,7 @@ Official Bitfinex REST v1 & v2 API client for Node.js (ESM, TypeScript).
 15. [Error Handling](#error-handling)
 16. [Proxy / Custom Fetch](#proxy--custom-fetch)
 17. [Models & Transform](#models--transform)
+18. [Utility Methods](#utility-methods)
 
 ---
 
@@ -319,6 +320,56 @@ const details = await rest.symbolDetails()
 ```
 
 [API Reference](https://docs.bitfinex.com/reference#rest-public-conf)
+
+---
+
+#### symbols(cb?)
+
+Get a list of valid trading symbol names.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| _(none)_ | | | No parameters required. |
+
+**Returns:** `Promise<string[]>`
+
+```typescript
+const symbols = await rest.symbols()
+// ['tBTCUSD', 'tETHUSD', ...]
+```
+
+---
+
+#### inactiveSymbols(cb?)
+
+Get a list of inactive (delisted) symbol names.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| _(none)_ | | | No parameters required. |
+
+**Returns:** `Promise<string[]>`
+
+```typescript
+const inactive = await rest.inactiveSymbols()
+```
+
+---
+
+#### futures(cb?)
+
+Get a list of valid futures symbol names.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| _(none)_ | | | No parameters required. |
+
+**Returns:** `Promise<string[]>`
+
+```typescript
+const futuresPairs = await rest.futures()
+// ['tBTCF0:USTF0', ...]
+```
 
 ---
 
@@ -768,11 +819,15 @@ Claim an existing open position.
 | Param | Type | Required | Description |
 |---|---|---|---|
 | `params.id` | `number` | Yes | Position ID to claim. |
+| `params.amount` | `number \| string` | No | Amount for partial claim. |
 
 **Returns:** `Promise<Notification>`
 
 ```typescript
 const result = await rest.claimPosition({ id: 12345 })
+
+// Partial claim
+const partial = await rest.claimPosition({ id: 12345, amount: 0.5 })
 ```
 
 ---
@@ -992,6 +1047,24 @@ const info = await rest.fundingInfo({ key: 'fUSD' })
 ```
 
 [API Reference](https://docs.bitfinex.com/v2/reference#rest-auth-info-funding)
+
+---
+
+#### marginInfo(params?, cb?)
+
+Get base margin info for the account.
+
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `params.key` | `string` | No | Margin key. Defaults to `'base'`. |
+
+**Returns:** `Promise<MarginInfo>`
+
+```typescript
+const margin = await rest.marginInfo({ key: 'base' })
+```
+
+[API Reference](https://docs.bitfinex.com/v2/reference#rest-auth-info-margin)
 
 ---
 
@@ -1846,7 +1919,7 @@ RESTv1 uses callback-only methods (no promises). It is provided for backward com
 | `active_orders(cb)` | `activeOrders()` |
 | `orders_history(cb)` | `orderHistory()` |
 | `active_positions(cb)` | `positions()` |
-| `claim_position(id, amount, cb)` | `claimPosition({ id })` |
+| `claim_position(id, amount, cb)` | `claimPosition({ id, amount? })` |
 | `wallet_balances(cb)` | `wallets()` |
 | `movements(ccy, opts, cb)` | `movements({ ccy })` |
 | `past_trades(symbol, opts, cb)` | `accountTrades({ symbol })` |
@@ -2001,3 +2074,31 @@ The following model classes from `bfx-api-node-models` are used for transformati
 | `Notification` | Used internally for write operations (`submitOrder`, `cancelOrder`, etc.) |
 
 When `transform` is `false` (the default), all methods return raw arrays as received from the API.
+
+---
+
+## Utility Methods
+
+#### getURL()
+
+Returns the REST API URL the client was constructed with.
+
+**Returns:** `string`
+
+```typescript
+const rest = new RESTv2()
+console.log(rest.getURL()) // 'https://api.bitfinex.com'
+```
+
+---
+
+#### usesAgent()
+
+Returns whether a custom `fetch` function was provided to the constructor (useful for detecting proxy configurations).
+
+**Returns:** `boolean`
+
+```typescript
+const rest = new RESTv2({ fetch: customFetch })
+console.log(rest.usesAgent()) // true
+```

@@ -175,6 +175,45 @@ describe('RESTv2', () => {
     testMethod('withdraw', '/auth/w/withdraw', '_makeAuthRequest', { wallet: 'exchange' })
     testMethod('getDepositAddress', '/auth/w/deposit/address', '_makeAuthRequest', { wallet: 'exchange', method: 'bitcoin' })
     testMethod('claimPosition', '/auth/w/position/claim', '_makeAuthRequest', { id: 123 })
+
+    describe('claimPosition amount handling', () => {
+      it('sends amount as string when provided as number', async () => {
+        const rest = new RESTv2()
+        let sentBody: any
+        ;(rest as any)._makeAuthRequest = (_url: string, body: any) => {
+          sentBody = body
+          return Promise.resolve([0, 'on-req', null, null, []])
+        }
+        await rest.claimPosition({ id: 123, amount: 0.5 })
+        assert.strictEqual(sentBody.id, 123)
+        assert.strictEqual(sentBody.amount, '0.5')
+      })
+
+      it('sends amount as-is when provided as string', async () => {
+        const rest = new RESTv2()
+        let sentBody: any
+        ;(rest as any)._makeAuthRequest = (_url: string, body: any) => {
+          sentBody = body
+          return Promise.resolve([0, 'on-req', null, null, []])
+        }
+        await rest.claimPosition({ id: 123, amount: '0.5' })
+        assert.strictEqual(sentBody.amount, '0.5')
+      })
+
+      it('omits amount from body when not provided', async () => {
+        const rest = new RESTv2()
+        let sentBody: any
+        ;(rest as any)._makeAuthRequest = (_url: string, body: any) => {
+          sentBody = body
+          return Promise.resolve([0, 'on-req', null, null, []])
+        }
+        await rest.claimPosition({ id: 123 })
+        assert.strictEqual(sentBody.id, 123)
+        assert.strictEqual(sentBody.amount, undefined)
+        assert.ok(!('amount' in sentBody), 'body should not contain amount key')
+      })
+    })
+
     testMethod('closeFunding', '/auth/w/funding/close', '_makeAuthRequest', { id: 1, type: 'LIMIT' })
     testMethod('cancelFundingOffer', '/auth/w/funding/offer/cancel', '_makeAuthRequest', { id: 1 })
     testMethod('cancelAllFundingOffers', '/auth/w/funding/offer/cancel/all', '_makeAuthRequest', { currency: 'USD' })
